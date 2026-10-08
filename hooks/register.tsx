@@ -105,16 +105,17 @@ export const register: Register = on => {
 
     const { Box, Button, Text } = $.ui.resolve(e)
     const rows = barRows(shown)
-    const label = `${(await read($, isOpen)) ? '▾' : '▸'} ${shown.percentage}%`
-    const tail = `${tokens(shown.totalTokens)} / ${tokens(shown.maxTokens)}`
-    // One cell short of the row: a band exactly as wide as its row blanks the
-    // engine's effort indicator beneath it while the prompt holds text.
-    const width = Math.max(10, e.props.bodyColumns - label.length - tail.length - 3)
+    const label = `${(await read($, isOpen)) ? '▾' : '▸'} Context`
+    const tail = `${tokens(shown.totalTokens)} / ${tokens(shown.maxTokens)} (${shown.percentage}%)`
+    // The terminal draws the button as `[ label ]`. One cell short of the row:
+    // a band exactly as wide as its row blanks the engine's effort indicator
+    // beneath it while the prompt holds text.
+    const width = Math.max(10, e.props.bodyColumns - (label.length + 4) - tail.length - 3)
     const widths = cells(rows, width)
 
     return (
       <Box columnGap={1}>
-        <Button key="details" label={label} plain autoFocus onPress={() => toggle($)} />
+        <Button key="details" label={label} autoFocus onPress={() => toggle($)} />
         <Box key="bar">
           {rows.map((row, i) => (
             <Text color={row.color}>{GLYPH[row.kind].repeat(widths[i] ?? 0)}</Text>

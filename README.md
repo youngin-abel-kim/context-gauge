@@ -4,7 +4,7 @@ A Claude Code mod that draws the context window as a one-line gauge above the pr
 by category the way `/context` breaks it down. Click it for the details.
 
 ```
-▸ 62% ██████████████████████████████████████░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒ 124k / 200k
+[ ▸ Context ] █████████████████████████████░░░░░░░▒▒▒▒▒▒▒▒▒▒▒ 124k / 200k (62%)
 ```
 
 Each category is drawn in the theme colour `/context` gives it, so the segments match its grid.
@@ -17,9 +17,9 @@ Each category is drawn in the theme colour `/context` gives it, so the segments 
 - **The figures**: the percentage and `used / window` are measured against the window
   auto-compaction counts from, which can be smaller than the model's limit. It's the same figure
   `/context` prints.
-- **The details**: run `/context-gauge`, press `ctrl+x tab` then Enter, or click `▸ 62%` to open
-  a pane. It lists each category with its tokens and share of the window, then the memory files, the
-  MCP servers, the custom agents and the skills listing with what each one costs. It also lists
+- **The details**: run `/context-gauge`, press `ctrl+x tab` then Enter, or click `[ ▸ Context ]` to
+  open a pane. It lists each category with its tokens and share of the window, then the memory files,
+  the MCP servers, the custom agents and the skills listing with what each one costs. It also lists
   deferred tool schemas, which sit outside the window and aren't on the bar. `Esc` closes it, and
   so does the command or the toggle again.
 

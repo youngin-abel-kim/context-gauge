@@ -94,13 +94,13 @@ test('the band is one line, a cell short of the row: the toggle, the bar and the
 
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await $.ui.mount({ plugin: 'context-gauge', surface, component: 'AbovePrompt', props: BAND })
-    expect((await ui.find({ key: 'details' }))?.text).toBe('▸ 62%')
-    expect(await ui.find({ type: 'Text', text: '124k / 200k' })).toBeDefined()
+    expect((await ui.find({ key: 'details' }))?.text).toBe('▸ Context')
+    expect(await ui.find({ type: 'Text', text: '124k / 200k (62%)' })).toBeDefined()
     expect(await ui.find({ type: 'Text', text: /Messages/ })).toBeUndefined()
 
     const bar = (await ui.find({ key: 'bar' }))?.text ?? ''
     expect(bar).toMatch(/^█+░+▒+$/)
-    expect(bar.length).toBe(80 - '▸ 62%'.length - '124k / 200k'.length - 3)
+    expect(bar.length).toBe(80 - '[ ▸ Context ]'.length - '124k / 200k (62%)'.length - 3)
     await ui.unmount()
   }
 })
@@ -119,7 +119,7 @@ test('pressing the toggle opens the details pane', async ($, on) => {
   await band.press({ key: 'details' })
   expect(opened).toHaveLength(1)
   expect(opened[0]).toMatchObject({ id: 'context-gauge', focus: true, closeOnEscape: true })
-  expect((await band.find({ key: 'details' }))?.text).toBe('▾ 62%')
+  expect((await band.find({ key: 'details' }))?.text).toBe('▾ Context')
 
   for (const surface of ['terminal', 'desktop'] as const) {
     const pane = await $.ui.mount({
