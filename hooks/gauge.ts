@@ -10,7 +10,7 @@ const PLACE = { used: 0, free: 1, buffer: 2, deferred: 3 } as const
 
 /**
  * Keeps every row that holds tokens, in /context's grid order, and the lists
- * the details pane draws.
+ * the details draw.
  */
 export function fromBreakdown(breakdown: SessionContextBreakdown): Gauge {
   const rows: GaugeRow[] = []
@@ -104,7 +104,7 @@ export function tokens(n: number): string {
   return `${(n / 1_000_000).toFixed(1)}M`
 }
 
-/** One line of the details pane. */
+/** One line of the details. */
 export type Line =
   | { kind: 'heading'; text: string }
   | { kind: 'note'; text: string }
@@ -120,8 +120,11 @@ export type Line =
       isDim: boolean
     }
 
+/** A details row's fixed columns, in cells: the glyph, the label, the tokens and the share. */
+export const COLUMNS = { glyph: 1, label: 24, tokens: 5, share: 6 } as const
+
 /**
- * The details pane, line by line: the categories with their share of the
+ * The details, line by line: the categories with their share of the
  * window as /context lists them, then what the memory files, MCP servers,
  * skills and custom agents each carry.
  */
@@ -185,4 +188,27 @@ export function details(gauge: Gauge): Line[] {
   lines.push({ kind: 'blank' }, { kind: 'note', text: 'Estimated locally; /context counts exactly.' })
 
   return lines
+}
+
+/**
+ * The cells the details need: the widest of a row's fixed columns, the gaps
+ * between its five and its detail, and a note's or heading's text.
+ */
+export function detailsWidth(lines: readonly Line[]): number {
+  const fixed = COLUMNS.glyph + COLUMNS.label + COLUMNS.tokens + COLUMNS.share + 4
+
+  return Math.max(
+    0,
+    ...lines.map(line => {
+      switch (line.kind) {
+        case 'row':
+          return fixed + line.detail.length
+        case 'heading':
+        case 'note':
+          return line.text.length
+        case 'blank':
+          return 0
+      }
+    }),
+  )
 }

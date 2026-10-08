@@ -1,8 +1,8 @@
 import { expect, test } from 'claude-code/testing'
 import type { Engine } from 'claude-code/testing'
-import type { On, PaneOpenArgs, RenderPropsOf, SessionUsage } from 'claude-code'
+import type { On, RenderPropsOf, SessionUsage } from 'claude-code'
 
-import { cells } from '../hooks/gauge'
+import { cells, details, detailsWidth, fromBreakdown } from '../hooks/gauge'
 
 const USAGE: SessionUsage = {
   startedAt: 0,
@@ -51,15 +51,6 @@ const BAND: RenderPropsOf['AbovePrompt'] = {
   view: {},
 }
 
-const PANE: RenderPropsOf['Pane'] = {
-  title: 'Context',
-  isFocused: true,
-  bodyColumns: 70,
-  placement: 'dock',
-  scroll: { offset: 0, bodyRows: 30 },
-  view: {},
-}
-
 /** Answers the engine's side of a measurement. */
 function answerUsage(on: On) {
   on('session.usage', () => ({ value: USAGE }))
@@ -105,48 +96,56 @@ test('the band is one line, a cell short of the row: the toggle, the bar and the
   }
 })
 
-test('pressing the toggle opens the details pane', async ($, on) => {
+test('the details are as wide as their widest line: here the summary', () => {
+  const breakdown = USAGE.context.breakdown
+  if (!breakdown) {
+    throw new Error('the fixture has a breakdown')
+  }
+  // The summary note is 60 cells; the widest row, `2 tools, 1 loaded`, 40 + 17.
+  expect(detailsWidth(details(fromBreakdown(breakdown)))).toBe(60)
+})
+
+test('pressing the toggle shows the details below the bar, and again hides them', async ($, on) => {
   answerUsage(on)
-  const opened: PaneOpenArgs[] = []
-  on('ui.panes', () => ({ value: [] }))
-  on('ui.open', ($, e) => {
-    opened.push(e)
-    return { value: { isPlaced: true } }
-  })
   await measure($)
 
-  const band = await $.ui.mount({ plugin: 'context-gauge', surface: 'terminal', component: 'AbovePrompt', props: BAND })
-  await band.press({ key: 'details' })
-  expect(opened).toHaveLength(1)
-  expect(opened[0]).toMatchObject({ id: 'context-gauge', focus: true, closeOnEscape: true })
-  expect((await band.find({ key: 'details' }))?.text).toBe('▾ Context')
-
   for (const surface of ['terminal', 'desktop'] as const) {
-    const pane = await $.ui.mount({
-      plugin: 'context-gauge',
-      surface,
-      component: 'Pane',
-      requestId: 'context-gauge',
-      props: PANE,
-    })
-    expect(await pane.find({ type: 'Text', text: /auto-compacts at 155k/ })).toBeDefined()
-    expect(await pane.find({ type: 'Text', text: 'Messages' })).toBeDefined()
-    expect(await pane.find({ type: 'Text', text: '53.3%' })).toBeDefined()
-    expect(await pane.find({ type: 'Text', text: '/repo/CLAUDE.md' })).toBeDefined()
-    expect(await pane.find({ type: 'Text', text: '2 tools, 1 loaded' })).toBeDefined()
-    expect(await pane.find({ type: 'Text', text: '23 of 25 listed' })).toBeDefined()
-    await pane.unmount()
+    const band = await $.ui.mount({ plugin: 'context-gauge', surface, component: 'AbovePrompt', props: BAND })
+    expect(await band.find({ type: 'Text', text: 'Messages' })).toBeUndefined()
+
+    await band.press({ key: 'details' })
+    expect((await band.find({ key: 'details' }))?.text).toBe('▾ Context')
+    expect(await band.find({ type: 'Text', text: /auto-compacts at 155k/ })).toBeDefined()
+    expect(await band.find({ type: 'Text', text: 'Messages' })).toBeDefined()
+    expect(await band.find({ type: 'Text', text: '53.3%' })).toBeDefined()
+    expect(await band.find({ type: 'Text', text: '/repo/CLAUDE.md' })).toBeDefined()
+    expect(await band.find({ type: 'Text', text: '2 tools, 1 loaded' })).toBeDefined()
+    expect(await band.find({ type: 'Text', text: '23 of 25 listed' })).toBeDefined()
+    expect((await band.find({ key: 'breakdown' }))?.props.width).toBe(60)
+
+    await band.press({ key: 'details' })
+    expect((await band.find({ key: 'details' }))?.text).toBe('▸ Context')
+    expect(await band.find({ key: 'breakdown' })).toBeUndefined()
+    await band.unmount()
   }
 })
 
-test('/context-gauge opens the details pane on the main screen too', async ($, on) => {
+test('a band narrower than the details holds them to its width', async ($, on) => {
   answerUsage(on)
-  const opened: PaneOpenArgs[] = []
-  on('ui.panes', () => ({ value: [] }))
-  on('ui.open', ($, e) => {
-    opened.push(e)
-    return { value: { isPlaced: true } }
+  await measure($)
+
+  const band = await $.ui.mount({
+    plugin: 'context-gauge',
+    surface: 'terminal',
+    component: 'AbovePrompt',
+    props: { ...BAND, bodyColumns: 50 },
   })
+  await band.press({ key: 'details' })
+  expect((await band.find({ key: 'breakdown' }))?.props.width).toBe(49)
+})
+
+test('/context-gauge shows the details on the main screen too', async ($, on) => {
+  answerUsage(on)
   await measure($)
 
   const ran = await $.command.run({
@@ -156,5 +155,7 @@ test('/context-gauge opens the details pane on the main screen too', async ($, o
     presentation: { isFullscreen: false, columns: 80 },
   })
   expect(ran.text).toBeUndefined()
-  expect(opened[0]).toMatchObject({ id: 'context-gauge', focus: true })
+
+  const band = await $.ui.mount({ plugin: 'context-gauge', surface: 'terminal', component: 'AbovePrompt', props: BAND })
+  expect(await band.find({ type: 'Text', text: 'Messages' })).toBeDefined()
 })

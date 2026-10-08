@@ -1,7 +1,7 @@
 # context-gauge
 
 A Claude Code mod that draws the context window as a one-line gauge above the prompt, broken down
-by category the way `/context` breaks it down. Click it for the details.
+by category the way `/context` breaks it down. Click it for the details beneath it.
 
 ```
 [ ▸ Context ] █████████████████████████████░░░░░░░▒▒▒▒▒▒▒▒▒▒▒ 124k / 200k (62%)
@@ -18,27 +18,30 @@ Each category is drawn in the theme colour `/context` gives it, so the segments 
   auto-compaction counts from, which can be smaller than the model's limit. It's the same figure
   `/context` prints.
 - **The details**: run `/context-gauge`, press `ctrl+x tab` then Enter, or click `[ ▸ Context ]` to
-  open a pane. It lists each category with its tokens and share of the window, then the memory files,
-  the MCP servers, the custom agents and the skills listing with what each one costs. It also lists
-  deferred tool schemas, which sit outside the window and aren't on the bar. `Esc` closes it, and
-  so does the command or the toggle again.
+  show the breakdown under the bar; the same again hides it. It lists each category with its tokens
+  and share of the window, then the memory files, the MCP servers, the custom agents and the skills
+  listing with what each one costs. It also lists deferred tool schemas, which sit outside the
+  window and aren't on the bar. It's as wide as its widest line. In the fullscreen layout the band
+  gets at most half the screen, so a long breakdown scrolls: use the wheel, or the arrows after
+  `ctrl+x tab`.
 
   Clicks reach the band only in Claude Code's fullscreen layout. Inside tmux, Claude Code uses the
   main-screen layout by default, so there use the command or the keys, or start Claude Code with
   `CLAUDE_CODE_NO_FLICKER=1` (and `set -g mouse on` in tmux) to get the fullscreen layout.
 
 ```
+[ ▾ Context ] █████████████████████████████░░░░░░░▒▒▒▒▒▒▒▒▒▒▒ 124k / 200k (62%)
 claude-opus-5-5 · 124k of 200k (62%) · auto-compacts at 155k
 
-█ System prompt                  3.1k   1.6%
-█ System tools                    12k   6.2%
-█ Messages                       107k  53.3%
-░ Free space                      31k  15.5%
-▒ Autocompact buffer              45k  22.5%
-  MCP tools (deferred)           9.0k
+█ System prompt                                  3.1k   1.6%
+█ System tools                                    12k   6.2%
+█ Messages                                       107k  53.3%
+░ Free space                                      31k  15.5%
+▒ Autocompact buffer                              45k  22.5%
+  MCP tools (deferred)                           9.0k
 
 Memory files
-  Project        /repo/CLAUDE.md 2.0k
+  Project                  /repo/CLAUDE.md       2.0k
 ```
 
 It updates at session start, after each turn and after a `/compact`. A `/clear` hides it until the
