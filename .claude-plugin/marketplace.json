@@ -1,0 +1,12 @@
+{
+  "name": "context-gauge",
+  "owner": { "name": "Youngin Kim" },
+  "description": "A context-window breakdown gauge for Claude Code.",
+  "plugins": [
+    {
+      "name": "context-gauge",
+      "source": "./",
+      "description": "A gauge above the prompt: the context window broken down by category, as /context breaks it down."
+    }
+  ]
+}

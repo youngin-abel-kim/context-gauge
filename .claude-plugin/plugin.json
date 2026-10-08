@@ -1,0 +1,7 @@
+{
+  "name": "context-gauge",
+  "version": "0.1.0",
+  "description": "A gauge above the prompt: the context window broken down by category, as /context breaks it down.",
+  "author": { "name": "Youngin Kim" },
+  "types": "./types/index.d.ts"
+}
