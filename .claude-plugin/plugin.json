@@ -4,5 +4,10 @@
   "description": "A gauge above the prompt: the context window broken down by category, as /context breaks it down.",
   "author": { "name": "Youngin Kim" },
   "license": "MIT",
+  "homepage": "https://github.com/youngin-abel-kim/context-gauge",
+  "repository": "https://github.com/youngin-abel-kim/context-gauge",
+  "documentationUrl": "https://github.com/youngin-abel-kim/context-gauge#readme",
+  "supportUrl": "https://github.com/youngin-abel-kim/context-gauge/issues",
+  "privacyPolicyUrl": "https://github.com/youngin-abel-kim/context-gauge/blob/main/PRIVACY.md",
   "types": "./types/index.d.ts"
 }
