@@ -69,6 +69,12 @@ claude plugin install context-gauge@context-gauge
 
 Mods need Claude Code 2.1.287 or later. Installing at the user scope turns it on in every session.
 
+## Support and privacy
+
+Report a problem or ask a question in
+[the repository's issues](https://github.com/youngin-abel-kim/context-gauge/issues).
+[PRIVACY.md](PRIVACY.md) says what the mod reads and keeps.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
