@@ -3,5 +3,6 @@
   "version": "0.2.0",
   "description": "A gauge above the prompt: the context window broken down by category, as /context breaks it down.",
   "author": { "name": "Youngin Kim" },
+  "license": "MIT",
   "types": "./types/index.d.ts"
 }

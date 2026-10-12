@@ -35,6 +35,7 @@ claude-opus-5-5 · 124k of 200k (62%) · auto-compacts at 155k
 
 █ System prompt                                  3.1k   1.6%
 █ System tools                                    12k   6.2%
+█ Memory files                                   2.0k   1.0%
 █ Messages                                       107k  53.3%
 ░ Free space                                      31k  15.5%
 ▒ Autocompact buffer                              45k  22.5%
@@ -42,11 +43,22 @@ claude-opus-5-5 · 124k of 200k (62%) · auto-compacts at 155k
 
 Memory files
   Project                  /repo/CLAUDE.md       2.0k
+
+MCP tools
+  notion                   2 tools, 1 loaded      600
+
+Skills
+  23 of 25 listed                                4.1k
+
+Estimated locally; /context counts exactly.
 ```
 
 It updates at session start, after each turn and after a `/compact`. A `/clear` hides it until the
 next turn. Counts are local estimates, so measuring sends no token-count requests, and they can
 differ a little from `/context`'s. Collapse the band with its `[-]` or `ctrl+x ctrl+a`.
+
+It makes no network requests, touches no files and starts no processes: it reads the session's
+context usage from Claude Code and keeps what it draws in the session's state.
 
 ## Install
 
@@ -57,14 +69,20 @@ claude plugin install context-gauge@context-gauge
 
 Mods need Claude Code 2.1.287 or later. Installing at the user scope turns it on in every session.
 
-## Layout
+## License
+
+MIT. See [LICENSE](LICENSE).
+
+## Development
+
+### Layout
 
 - `hooks/register.tsx`: the hooks, which measure the window and draw the band.
 - `hooks/gauge.ts`: the breakdown → bar layout, with no engine calls.
 - `types/index.d.ts`: the `$.state` contract.
 - `tests/`: run by `claude plugin test`.
 
-## Release
+### Release
 
 1. Edit `hooks/`.
 2. Check it:
@@ -80,10 +98,12 @@ Mods need Claude Code 2.1.287 or later. Installing at the user scope turns it on
    ```
    then run `/reload-plugins`.
 
-## Try local edits
+### Try local edits
+
+From a clone of this repository:
 
 ```bash
-claude --plugin-dir ~/workspace/context-gauge/main
+claude --plugin-dir .
 ```
 
 Saving a file reloads the mod in that session. When the engine loads the mod it writes its type
