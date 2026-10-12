@@ -21,6 +21,6 @@ requests either.
 
 ## Contact
 
-Questions go to [the repository's issues](https://github.com/youngin-abel-kim/context-gauge/issues).
+Questions go to the issues of the plugin's GitHub repository, `youngin-abel-kim/context-gauge`.
 
 Last updated: 12 October 2026.
